@@ -5,9 +5,9 @@ module HasTimestampToggle
   def has_timestamp_toggle (options = {})
     options = {
       :states        => [:enabled, :disabled], # :shown, :hidden | :unread, :read
-      :actions       => [:enable, :disable], # :show, :hide    | :mark_unread, :mark_read,
+      :actions       => [:enable, :disable],   # :show, :hide    | :mark_unread, :mark_read,
       :column        => nil,
-      :default_scope => true
+      :default_scope => false
     }.merge!(options)
 
     default_state, alternate_state   = options[:states]
@@ -17,7 +17,7 @@ module HasTimestampToggle
 
     scope default_state, -> { where(column => nil) }
     scope alternate_state, -> { where.not(column => nil) }
-    default_scope -> { where(column => nil) } if options[:default_scope]
+    default_scope -> { send(default_state) } if options[:default_scope]
 
     class_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
       def #{default_state}?                                                         # def enabled?
