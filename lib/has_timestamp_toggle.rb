@@ -4,18 +4,18 @@ require 'active_record/base'
 module HasTimestampToggle
   def has_timestamp_toggle (options = {})
     options = {
-      :states        => [:enabled, :disabled], # :shown, :hidden | :unread, :read
-      :actions       => [:enable, :disable],   # :show, :hide    | :mark_unread, :mark_read,
-      :column        => nil,
-      :default_scope => false
+      states:        [:enabled, :disabled], # :shown, :hidden | :unread, :read
+      actions:       [:enable, :disable],   # :show, :hide    | :mark_unread, :mark_read,
+      column:        nil,
+      default_scope: false
     }.merge!(options)
 
-    default_state, alternate_state   = options[:states]
+    default_state,  alternate_state  = options[:states]
     default_action, alternate_action = options[:actions]
 
     column = options[:column] || :"#{alternate_state}_at"
 
-    scope default_state, -> { where(column => nil) }
+    scope default_state,   -> { where(column => nil) }
     scope alternate_state, -> { where.not(column => nil) }
     default_scope -> { send(default_state) } if options[:default_scope]
 
@@ -73,4 +73,4 @@ module HasTimestampToggle
   end
 end
 
-ActiveRecord::Base.send :extend, HasTimestampToggle
+ActiveRecord::Base.send(:extend, HasTimestampToggle)
